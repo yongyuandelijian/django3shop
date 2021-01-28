@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <!-- ..........标题导入静态文件.......... -->
+        {% load static %}
+        <title>{{ title }}</title>
+        <link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}" />
+        <link rel="stylesheet" type="text/css" href="{% static 'layui/css/layui.css' %}" />
+        <script type="text/javascript" src="{% static 'layui/layui.js' %}"></script>
+    </head>
+    <body>
+        <div class="header">
+            <div class="headerLayout w1200">
+                <div class="headerCon">
+                    <!-- ..........2 使用路由名称生成url地址.......... -->
+                    <h1 class="mallLogo">
+                        <a href="{% url 'index:index' %}" title="母婴商城">
+                            <img src="{% static 'img/logo.png' %}" />
+                        </a>
+                    </h1>
+                    <!-- ..........这里是搜索商品列表框，暂时先空出来 novalidate暂时先不验证.......... -->
+                    <div class="mallSearch">
+                        <form action="{% url 'showware:showware' %}" method="GET" class="layui-form" novalidate>
+                            <input type="text" name="warename" required lay-verify="required" autocomplete="off" class="layui-input" placeholder="请输入需要的商品"/>
+                            <button class="layui-btn" lay-submit lay-filter="formDemo">
+                                <i class="layui-icon layui-icon-search"></i> 
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="content content-nav-base {{classContent}}">
+            <div class="main-nav">
+                <div class="inner-cont0">
+                    <div class="inner-cont1 w1200">
+                        <!--导航栏，选中的页是选中样式，其他的则是未选中样式 django内置的if语法-->
+                        <div class="inner-cont2">
+                            <a href="{% url 'index:index' %} " {% if classContent == '' %} class="active" {% endif %}>首页</a>
+                            <a href="{% url 'showware:showware' %}" {% if classContent=='showware' %} class="active"{% endif %}>所有商品</a>
+                            <a href="{% url 'shopper:shopcart' %}" {% if classContent=='shopcart' %} class="active" {% endif %}>购物车</a>
+                            <a href="{% url 'shopper:shopper' %}" {% if classContent=='information' %} class="active" {% endif %}>个人中心</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- 设置文件调用块，在其他html中编写此语法即可调用 -->
+            {% block content %}{% endblock content %}
+        </div>
+        {% block footer %}{% endblock footer %}
+        <script type="text/javascript">
+            {% block script %}{% endblock script %}
+        </script>
+    </body>
+</html>
