@@ -1,5 +1,168 @@
-<!--导入公共页面以及静态资源-->
+<!--1调用模板文件common.html,导入静态资源-->
 {% extends 'common.html' %}
 {% load static %}
-<!---->
+<!--2 重写common中的content模块 -->
 {% block content %}
+<div class="category-con">
+    <div class="category-banner">
+        <div class="w1200">
+            <img src="{% static 'img/banner1.jpg' %}">
+        </div>
+    </div>
+</div>
+<!--3 轮播图 -->
+<div class="floors">
+    <div class="sk">
+        <div class="sk_inner w1200">
+        <div class="sk_hd">
+            <a href="javascript:;">
+                <img src="{% static 'img/s_img1.jpg' %}">
+            </a>
+        </div>
+        <div class="sk_bd">
+            <!--轮播大图-->
+            <div class="layui-carousel" id="test1">
+                <div carousel-item>
+                    <div class="item-box">
+                        {% for ware in allTop8 %}
+                        {% if forloop.counter < 5 %}  
+                        <div class="item">
+                            <a href="{% url 'showware:waredetail' ware.id %}">
+                                <img src="{{ ware.img_main.url }}">  <!--获取商品大图可以看懂，filefied类型需要调用.url获取-->
+                            </a>
+                            <div class="title">{{ ware.name }}</div>
+                            <div class="price">
+                                <span>￥{{ ware.discount |floatformat:'2' }} </span>
+                                <del>￥{{ ware.price|floatformat:'2' }}</del>
+                            </div>
+                        </div>
+                        {% endif %}
+                        {% endfor %}
+                    </div>
+                    <div class="item-box">
+                        {% for ware in allTop8 %}                 
+                        {% if forloop.counter > 4 %}  <!--这里的大于号小于号前后必须要有空格，否则会混在一起报错-->
+                        <div class="item">
+                            <a href="{% url 'showware:waredetail' ware.id %}">
+                                <img src="{{ ware.img_main.url }}">
+                            </a>
+                            <div class="title">{{ware.name}}</div>
+                            <div class="price">
+                                <span>￥{{ ware.discount|floatformat:'2' }}</span>
+                                <del>￥{{ ware.price|floatformat:'2' }}</del>
+                            </div>
+                        </div>
+                        {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>  
+        </div>
+    </div>
+</div>
+</div>
+<!--4 分类热销功能-->
+<div class="product-cont w1200" id="product-cont">
+    <div class="product-item product-item1 layui-clear">
+        <div class="left-title">
+            <h4>一楼</h4>
+            <img src="{% static 'img/icon_gou.png' %}">
+            <h5>宝宝服饰</h5>
+        </div>
+        <div class="right-cont">
+            <a href="javascript:;" class="top-img">
+                <img src="{% static 'img/img12.jpg' %}" alt="">
+            </a>
+            <div class="img-box">
+                {% for ware in etfsTop5 %}
+                <a href="{% url 'showware:waredetail' ware.id %}">
+                    <img src="{{ ware.img_main.url }}">
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    <div class="product-item product-item2 layui-clear">
+        <div class="left-title">
+            <h4><i>二楼</i></h4>
+            <img src="{% static 'img/icon_gou.png' %}">
+            <h5>奶粉辅食</h5>
+        </div>
+        <div class="right-cont">
+            <a href="javascript:;" class="top-img">
+                <img src="{% static 'img/img12.jpg' %}" alt="">
+            </a>
+            <div class="img-box">
+                {% for ware in nffsTop5 %}
+                <a href="{% url 'showware:waredetail' ware.id %}" >
+                    <img src="{{ ware.img_main.url }}">
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    <div class="product-item product-item3 layui-clear">
+        <div class="left-title">
+            <h4><i>三楼</i></h4>
+            <img src="{% static 'img/icon_gou.png' %}">
+            <h5>宝宝用品</h5>
+        </div>
+        <div class="right-cont">
+            <a href="javascript:;" class="top-img">
+                <img src="{% static 'img/img12.jpg' %}">
+            </a>
+            <div class="img-box">
+                {% for ware in yeypTop5 %}
+                <a href="{% url 'showware:waredetail' ware.id %}">
+                    <img src="{{ ware.img_main.url }}">
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+<!--5 重写的底部代码-->
+{% block footer %}
+<div class="footer">
+    <div class="ng-promise-box">
+        <div class="ng-promise w1200">
+            <p class="text">
+                <a class="icon1" href="javascript:;">7天无理由退换货</a>
+                <a class="icon2" href="javascript:;">满99元全场免运费</a>
+                <a class="icon3" style="margin-right: 0;" href="javascript:;">100%品质保证</a>
+            </p>
+        </div>
+    </div>
+    <div class="mod_help w1200">
+        <p>
+            <a href="javascript:;">关于本宝宝</a>
+            <span>|</span>
+            <a href="javascript:;">帮助中心</a>
+            <span>|</span>
+            <a href="javascript:;">售后服务</a>
+            <span>|</span>
+            <a href="javascript:;">母婴咨询</a>
+            <span>|</span>
+            <a href="javascript:;">关于货源</a>
+        </p>
+    </div>
+</div>
+{% endblock footer %}
+
+{% block script %}
+layui.config({
+    base:'{% static 'js/' %}'
+}).use(['mm','carousel'],function(){       // 导入需要的模块
+    var carousel=layui.carousel,
+    mm=layui.mm;
+    var option={
+        elem: '#test1'
+        ,width: '100%'
+        ,arrow: 'always'
+        ,height: '298'
+        ,indicator:'none'
+    }
+    carousel.render(option)
+});
+{% endblock script %}

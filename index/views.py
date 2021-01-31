@@ -9,22 +9,22 @@ class indexClassView(TemplateView):
     template_name="index.html"
     template_engine=None     # 不指定或者None即使用默认
     content_type=None
-    extra_context={"title","首页","classContent":""}  # 网页标题，控制网页导航栏的样式，也就是当前被选中的那个标签页的样式给谁
+    extra_context={"title":"首页","classContent":""}  # 网页标题，控制网页导航栏的样式，也就是当前被选中的那个标签页的样式给谁
 
     # 重新定义模板上下文的获取方法
     def get_context_data(self,**kwargs):
         context=super().get_context_data(**kwargs)
         # 然后我们对结果字典添加进去我们需要的内容
         context['allTop8']=Ware_info.objects.order_by('-sold').all()[:8]   # 按照销售数量倒序排列的前8条数据
-        context['warelevel']=Ware_level.objects.all()     # 商品级别的所有数据，用于后面的数据筛选
+        warelevel=Ware_level.objects.all()     # 商品级别的所有数据，用于后面的数据筛选
         # 儿童服饰下销量前5
-        lb_etfs=[x.second for x in Ware_level if x.first=='儿童服饰']
+        lb_etfs=[x.second for x in warelevel if x.first=='儿童服饰']
         context['etfsTop5']=Ware_info.objects.filter(level__in=lb_etfs).order_by('-sold')[:5]
         # 奶粉辅食销量前5
-        lb_nffs=[x.second for x in Ware_level if x.first=='奶粉辅食']
+        lb_nffs=[x.second for x in warelevel if x.first=='奶粉辅食']
         context['nffsTop5']=Ware_info.objects.filter(level__in=lb_nffs).order_by('-sold')[:5]
-        # 婴儿用品销量前5
-        lb_yeyp=[x.second for x in Ware_level if x.first=='婴儿用品']
+        # 儿童用品销量前5
+        lb_yeyp=[x.second for x in warelevel if x.first=='儿童用品']
         context['yeypTop5']=Ware_info.objects.filter(level__in=lb_yeyp).order_by('-sold')[:5]
         
         return context

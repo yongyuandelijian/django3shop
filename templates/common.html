@@ -30,7 +30,7 @@
                 </div>
             </div>
         </div>
-
+        <!-- 尤其是使用了模板语言的地方，要多注意符号两侧的空格必须空出来，否则可能会导致识别语法异常 -->
         <div class="content content-nav-base {{classContent}}">
             <div class="main-nav">
                 <div class="inner-cont0">
@@ -38,14 +38,14 @@
                         <!--导航栏，选中的页是选中样式，其他的则是未选中样式 django内置的if语法-->
                         <div class="inner-cont2">
                             <a href="{% url 'index:index' %} " {% if classContent == '' %} class="active" {% endif %}>首页</a>
-                            <a href="{% url 'showware:showware' %}" {% if classContent=='showware' %} class="active"{% endif %}>所有商品</a>
-                            <a href="{% url 'shopper:shopcart' %}" {% if classContent=='shopcart' %} class="active" {% endif %}>购物车</a>
-                            <a href="{% url 'shopper:shopper' %}" {% if classContent=='information' %} class="active" {% endif %}>个人中心</a>
+                            <a href="{% url 'showware:showware' %}" {% if classContent == 'showware' %} class="active" {% endif %}>所有商品</a>
+                            <a href="{% url 'shopper:shopcart' %}" {% if classContent == 'shopcart' %} class="active" {% endif %}>购物车</a>
+                            <a href="{% url 'shopper:shopper' %}" {% if classContent == 'information' %} class="active" {% endif %}>个人中心</a>
                         </div>
                     </div>
                 </div>
             </div>
-            <!-- 设置文件调用块，在其他html中编写此语法即可调用 -->
+            <!-- 设置文件调用块，在其他html中调用此语法，即可重写此模块，有点像是接口的意思 -->
             {% block content %}{% endblock content %}
         </div>
         {% block footer %}{% endblock footer %}

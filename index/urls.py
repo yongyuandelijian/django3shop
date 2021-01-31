@@ -1,6 +1,6 @@
 # index的urls配置
 from django.urls import path
-from .views import indexView
+from .views import indexClassView
 
 urlpatterns=[
     # path('',indexView,name='index')  直接调用方法

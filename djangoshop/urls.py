@@ -22,7 +22,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     # 设置各个app的路由分发规则,
     # 需要说明的是：namespace是可选参数，它可以帮助快速定位到指定app的路由，当设置这个参数，第一个参数必须两个值，否则就会提示错误，元组第一个值指定处理app的路由，第二个值除了空可以自己命名，但是一般我们都设置为app的名称
-    path('/',include(('index.urls','index'),namespace='index')),
+    path('',include(('index.urls','index'),namespace='index')),
     path('showware/',include(('showware.urls','showware'),namespace='showware')),
     path('shopper/',include(('shopper.urls','shopper'),namespace='shopper')),
     # 配置媒体资源的路由信息
