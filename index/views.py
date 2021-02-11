@@ -9,7 +9,7 @@ class indexClassView(TemplateView):
     template_name="index.html"
     template_engine=None     # 不指定或者None即使用默认
     content_type=None
-    extra_context={"title":"首页","classContent":""}  # 网页标题，控制网页导航栏的样式，也就是当前被选中的那个标签页的样式给谁
+    extra_context={"title":"炫酷的首页","classContent":""}  # 网页标题，控制网页导航栏的样式，也就是当前被选中的那个标签页的样式给谁
 
     # 重新定义模板上下文的获取方法
     def get_context_data(self,**kwargs):
