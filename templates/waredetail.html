@@ -1,0 +1,145 @@
+{% extends 'common.html' %}
+{% load static %}
+{% block content %}
+<div class="data-cont-wrap w1200">
+    <div class="crumb">
+        <a href="{% url "index:index" %}">首页</a>
+        <span> > </span>
+        <a href="{% url "showware:showware" %}">所有商品</a>
+        <span> > </span>
+        <a href="javascript:;">产品详情</a>
+    </div>
+    <div class="product-intro layui-clear">
+        <div class="preview-wrap">
+            <img height="300" width="300" src="{{ wareInfo.img_main.url }}">
+        </div>
+        <div class="itemInfo-wrap">
+            <div class="itemInfo">
+                <div class="title">
+                    <h4>{{ wareInfo.name }}</h4>
+                    {% if likes %}
+                        <span id="collect">
+                        <i class="layui-icon layui-icon-rate-solid"></i>收藏
+                        </span>
+                    {% else %}
+                        <span id="collect">
+                            <i class="layui-icon layui-icon-rate"></i>收藏
+                        </span>
+                    {% endif %}
+                </div>
+                <div class="summary">
+                    <p class="reference">
+                        <span>参考价</span>
+                        <del>￥{{ wareInfo.price|floatformat:'2' }}</del>
+                    </p>
+                    <p class="activity">
+                        <span>活动价</span>
+                        <strong class="price"><i>￥</i>{{ wareInfo.discount|floatformat:'2' }}</strong>
+                    </p>
+                    <p class="address-box">
+                        <span>送&nbsp;&nbsp;&nbsp;&nbsp;至</span>
+                        <strong class="address">陕西&nbsp;&nbsp;西安&nbsp;&nbsp;周至县</strong>
+                    </p>
+                </div>
+                <div class="choose-attrs">
+                    <div class="color layui-clear">
+                        <span class="title">规&nbsp;&nbsp;&nbsp;&nbsp;格</span>
+                        <div class="color-cont">
+                            <span class="btn active">{{ wareInfo.size }}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="number layui-clear">
+                    <span class="title">数&nbsp;&nbsp;&nbsp;&nbsp;量</span>
+                    <div class="number-cont">
+                        <span class="cut btn">-</span>
+                        <input onkeyup="checkNum()" onafterpaste="checkNum()" maxlength="4" type="" id="quantity" value="1">
+                        <span class="add btn">+</span>
+                    </div>
+                </div>
+                <div class="choose-btns">
+                    <a class="layui-btn layui-btn-danger car-btn">
+                        <i class="layui-icon layui-icon-cart-simple"></i>加入购物车
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--  -->
+    <div class="layui-clear">
+        <div class="aside">
+            <h4>热销推荐</h4>
+            <div class="item-list">
+            {% for tuijian in recommend %}
+                <div class="item">
+                    <a href="{% url "showware:waredetail" tuijian.wareid %}">
+                        <img height="280" width="280" src="{{ tuijian.img_main.url }}">
+                    </a>
+                    <p>
+                        <span title="{{ tuijian.name }}">{{ tuijian.name|slice:":15" }}
+                            {% if tuijian.name|length > 15 %}
+                                ...
+                            {% endif %}
+                        </span>
+                        <span class="pric">￥{{ tuijian.discount|floatformat:'2' }}</span>
+                    </p>
+                </div>
+            {% endfor %}
+            </div>
+        </div>
+        <!-- 4 -->
+        <div class="detail">
+            <h4>详情</h4>
+            <div class="item">
+                <img width="800" src="{{ wareInfo.img_detail.url }}">
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+{% block script %}
+    layui.config({
+        base:"{% static 'js/' %}"
+    }).use(['mm','jquery'],function(){
+        //实现数量点击加减符号的动态
+        var mm=layui.mm,$=layui.$;
+        var cur=$('.number-cont input').val();
+        $('.number-cont .btn').on('click',function(){
+            if ($(this).hasClass('add')){
+                cur++;
+            }else{
+                if (cur>1){
+                    cur--;
+                }
+            }
+        $('.number-cont input').val(cur);
+        });
+
+    $('.layui-btn.layui-btn-danger.car-btn').on('click',function(){
+        var quantity=$("#quantity").val();
+        window.location="{% url 'shopper:shopcart' %}?id={{ wareInfo.id }}&quantity="+quantity;
+    });
+
+    // 为收藏按钮绑定单击事件，点击后相互切换样式，并且发送ajax请求
+    $('#collect').on('click',function{
+    var url="{% url 'showware:collect' %}?id={{ wareInfo.id }}"
+    $.get(url,function(data,status){
+        if (status == 200){
+            $('#collect').find('i').removeClass("layui-icon-rate");    // 空心收藏按钮
+            $('#collect').find('i').addClass('layui-icon-rate-solid'); // 实心收藏按钮
+        }
+        alert(data.result);
+    });
+    });
+    });
+
+    function checkNum(){
+        if(this.value.lengt==1){
+            this.value=this.value.replace(/[^1-9]/g,'')
+        }else{
+            this.value=this.value.replace(/\D/g,'')
+        }
+    }
+
+{% endblock script %}
