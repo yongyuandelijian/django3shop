@@ -1,0 +1,77 @@
+{% extends 'common.html' %}
+{% load static %}
+{% block content %}
+<div class="login-bg">
+<div class="login-cont w1200">
+    <div class="form-box">
+        <form class="layui-form" action="" method="post">
+            {% csrf_token %}
+            <legend>手机号注册登录</legend>
+            <div class="layui-form-item">
+                <div class="layui-inline iphone">
+                    <div class="layui-input-inline">
+                        <i class="layui-icon layui-icon-cellphone iphone-icon"></i>
+                        <input name="username" id="username" lay-verify="required|phone" placeholder="请输入手机号" class="layui-input"/>
+                    </div>
+                </div>
+                <div class="layui-inline iphone">
+                    <div class="layui-input-inline">
+                        <i class="layui-icon layui-icon-password iphone-icon"></i>
+                        <input id="password" type="password" name="password" lay-verify="required|password" placeholder="请输入密码" class="layui-input"/>
+                    </div>
+                </div>
+            </div>
+            <p>{{ state }}</p>
+            <div class="layui-form-item login-btn">
+                <div class="layui-input-block">
+                    <button class="layui-btn" lay-sumit="" lay-filter="demo1">注册/登录</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+</div>
+{% endblock content %}
+
+{% block footer %}
+<div class="footer">
+    <div class="ng-promise-box">
+        <div class="ng-promise w1200">
+            <p class="text">
+                <a class="icon1" href="javascript:;">7天无理由退换货</a>
+                <a class="icon2" href="javascript:;">满99元全场免运费</a>
+                <a class="icon3" style="margin-right: 0;" href="javascript:;">100%品质保证</a>
+            </p>
+        </div>
+    </div>
+    <div class="mod_help w1200">
+        <p>
+            <a href="javascript:;">关于本宝宝</a>
+            <span>|</span>
+            <a href="javascript:;">帮助中心</a>
+            <span>|</span>
+            <a href="javascript:;">售后服务</a>
+            <span>|</span>
+            <a href="javascript:;">母婴咨询</a>
+            <span>|</span>
+            <a href="javascript:;">关于货源</a>
+        </p>
+        <p class="coty">母婴商城版权所有 &copy; 2012-2021</p>
+    </div>
+</div>
+{% endblock footer %}
+
+{% block script %}
+layui.config({
+    base:'{% static 'js/' %}'
+    }).use(['jquery','form'],function(){
+    var $=layui.$,form=layui.form;
+    $("#find").click(function(){
+    // 两个正斜杠内的是正则表达式的格式，test方法是正则表达式的方法
+    if (!/^1\d{10}$/.test($("#username").val())){
+    layer.msg("请输入正确的手机号");
+    return false;
+    }
+    })
+    })
+{% endblock script %}
