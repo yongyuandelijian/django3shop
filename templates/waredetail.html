@@ -19,7 +19,7 @@
                     <h4>{{ wareInfo.name }}</h4>
                     {% if likes %}
                         <span id="collect">
-                        <i class="layui-icon layui-icon-rate-solid"></i>收藏
+                        <i class="layui-icon layui-icon-rate-solid"></i>已收藏
                         </span>
                     {% else %}
                         <span id="collect">
@@ -38,7 +38,9 @@
                     </p>
                     <p class="address-box">
                         <span>送&nbsp;&nbsp;&nbsp;&nbsp;至</span>
-                        <strong class="address">陕西&nbsp;&nbsp;西安&nbsp;&nbsp;周至县</strong>
+                        <input class="address"  value="陕西&nbsp;&nbsp;西安&nbsp;&nbsp;周至县"/>
+                        <span>详细地址：</span>
+                        <input class="address"/>
                     </p>
                 </div>
                 <div class="choose-attrs">
@@ -53,7 +55,7 @@
                     <span class="title">数&nbsp;&nbsp;&nbsp;&nbsp;量</span>
                     <div class="number-cont">
                         <span class="cut btn">-</span>
-                        <input onkeyup="checkNum()" onafterpaste="checkNum()" maxlength="4" type="" id="quantity" value="1">
+                        <input onkeyup="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}" onafterpaste="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}" maxlength="4" type="" id="quantity" value="1">
                         <span class="add btn">+</span>
                     </div>
                 </div>
@@ -72,7 +74,7 @@
             <div class="item-list">
             {% for tuijian in recommend %}
                 <div class="item">
-                    <a href="{% url "showware:waredetail" tuijian.wareid %}">
+                    <a href="{% url "showware:waredetail" tuijian.id %}">
                         <img height="280" width="280" src="{{ tuijian.img_main.url }}">
                     </a>
                     <p>
@@ -116,26 +118,27 @@
         $('.number-cont input').val(cur);
         });
 
-    $('.layui-btn.layui-btn-danger.car-btn').on('click',function(){
-        var quantity=$("#quantity").val();
-        window.location="{% url 'shopper:shopcart' %}?id={{ wareInfo.id }}&quantity="+quantity;
-    });
+        $('.layui-btn.layui-btn-danger.car-btn').on('click',function(){
+            var quantity=$("#quantity").val();
+            window.location="{% url 'shopper:shopcart' %}?id={{ wareInfo.id }}&quantity="+quantity;
+        });
 
-    // 为收藏按钮绑定单击事件，点击后相互切换样式，并且发送ajax请求
-    $('#collect').on('click',function{
-    var url="{% url 'showware:collect' %}?id={{ wareInfo.id }}"
-    $.get(url,function(data,status){
-        if (status == 200){
-            $('#collect').find('i').removeClass("layui-icon-rate");    // 空心收藏按钮
-            $('#collect').find('i').addClass('layui-icon-rate-solid'); // 实心收藏按钮
-        }
-        alert(data.result);
-    });
-    });
+        // 为收藏按钮绑定单击事件，点击后相互切换样式，并且发送ajax请求
+        $('#collect').on('click',function(){
+        var url="{% url 'showware:collect' %}?id={{ wareInfo.id }}"
+        $.get(url,function(data,status){
+            if (status == 200){
+                $('#collect').find('i').removeClass("layui-icon-rate");    // 空心收藏按钮
+                $('#collect').find('i').addClass('layui-icon-rate-solid'); // 实心收藏按钮
+            }
+            alert(data.result);
+        });
+        });
     });
 
     function checkNum(){
-        if(this.value.lengt==1){
+    // 放到上面去引用不知道为什么没有作用，只好直接将代码放到了事件中，没有问题了，作用就是将非数字屏蔽
+        if(this.value.length==1){
             this.value=this.value.replace(/[^1-9]/g,'')
         }else{
             this.value=this.value.replace(/\D/g,'')

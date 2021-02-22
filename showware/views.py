@@ -47,7 +47,8 @@ def waredetailView(request,wareid):
     recommend=Ware_info.objects.exclude(id=wareid).order_by('-sold')[:5]
     likesList=request.session.get('likes',[]) # 好像还真的只有session里才记录了当前用户的收藏，问题是重启之后session里还有数据吗
     likes=True if wareid in likesList else False
-    return render(request,"waredetail.html",locals())
+    # print(locals())
+    return render(request,'waredetail.html',locals())
 
 # ajax 请求处理视图
 def collectView(request):
