@@ -1,0 +1,93 @@
+{% extends 'common.html' %}
+{% load static %}
+{% block content %}
+<div class="info-list-box">
+<div class="info-list">
+<div class="item-box layui-clear" id="list-cont">
+<div class="item">
+    <div class="img">
+        <img src="{% static 'img/portrait.png' %}">
+    </div>
+    <div class="text">
+        <h4>用户:{{ user.username }}</h4>
+        <p class="data">登录时间：{{ user.last_login }}</p>
+        <div class="left-nav">
+            <div class="title">
+                <a href="{% url 'shopper:shopcart' %}">我的购物车</a>
+            </div>
+            <div class="title">
+                <a href="{% url 'shopper:loginout' %}">退出登录</a>
+            </div>
+        </div>
+    </div>
+</div>
+    <!-- 显示每个订单的信息 -->
+    <div class="item1">
+        <div class="cart">
+            <div class="cart-table-th">
+                <div class="th th-item">
+                    <div class="th-inner">
+                        订单编号
+                    </div>
+                </div>
+                <div class="th th-price">
+                    <div class="th-inner">
+                        订单价格
+                    </div>
+                </div>
+                <div class="th th-amount">
+                    <div class="th-inner">
+                        购买时间
+                    </div>
+                </div>
+                <div class="th th-sum">
+                    <div class="th-inner">
+                        订单状态
+                    </div>
+                </div>
+            </div>
+            <div class="OrderList">
+                <div class="order-content" id="list-cont">
+                    {% for p in pages.object_list %}
+                    <ul class="item-content layui-clear">
+                        <li class="th th-item">{{ p.id }}</li>
+                        <li class="th th-price">￥{{ p.total_price|floatformat:'2' }}</li>
+                        <li class="th th-amount">{{ p.createtime }}</li>
+                        <li class="th th-sum">{{ p.state }}</li>
+                    </ul>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+<!-- 实现分页 -->
+<div id="demo0" style="text-align: center;">
+    <div class="layui-box layui-laypage layui-laypage-default" id="layui-laypage-1">
+        {% if pages.has_previous %}
+            <a href="{% url 'shopper:shopper' %}?pageNum={{ pages.previous_page_number }}" class="layui-laypage-prev">上一页</a>
+        {% endif %}
+        <!--显示当前页和前后两页-->
+        {% for page in pages.paginator.page_range %}
+            {% if pages.number == page %}
+                <span class="layui-laypage-curr"><em
+                        class="layui-laypage-em"></em><em>{{ page }}</em></span>
+            {% elif pages.number|add:'-1' == page or pages.number|add:'1' == page %}
+                <a href="{% url 'shopper:shopper' %}?pageNum={{ page }}">{{ page }}</a>
+            {% endif %}
+        {% endfor %}
+        {% if pages.has_next %}
+            <a href="{% url 'shopper:shopper' %}?pageNum={{ pages.next_page_number }}" class="layui-laypage-next">下一页</a>
+        {% endif %}
+    </div>
+</div>
+</div>
+{% endblock content %}
+{% block script %}
+    layui.config(
+        {base:'{% static 'js/' %}'}
+    ).use(['mm','laypage'],function(){
+        var mm=layui.mm,laypage=layui.laypage;
+    });
+{% endblock script %}

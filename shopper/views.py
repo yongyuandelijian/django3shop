@@ -1,6 +1,6 @@
 from django.shortcuts import render,redirect,reverse    # 从快捷方式导入重定向后者直接提供我都忍了，这个reverse的功能居然想等于模板中的url 就是将路由命名解析成路由地址
 from django.contrib.auth.models import User     # 导入用户模型来查询数据
-from django.contrib.auth import login,authenticate  # 导入凭证的验证方法，以及登录方法
+from django.contrib.auth import login,authenticate,logout  # 导入凭证的验证方法，以及登录,退出方法
 from .form import *
 from .models import *
 from django.http import HttpResponse
@@ -31,13 +31,13 @@ def shopperView(request):
     orderInfoList=order_info.objects.filter(user_id=request.user.id).order_by('-createtime')
     # 分页功能,如果传入的页码不是数字，则显示第一页，如果传入的页码不存在，则显示最后一页,最后返回要给界面的当前页面元素
     paginator=Paginator(orderInfoList,7)
+    pages=None
     try:
         pages=paginator.page(pageNum)
     except PageNotAnInteger:
         pages=paginator.page(1)
     except EmptyPage:
         pages=paginator.page(paginator.num_pages)
-
     return render(request,'shopper.html',locals())
 
 def loginView(request):
@@ -99,8 +99,10 @@ def loginView2(request):
 
 
 
-def loginoutView():
-    return HttpResponse('注销成功。。。')
+def loginoutView(request):
+    # 使用内置函数logout来退出用户登录状态
+    logout(request)
+    return redirect(reverse('index:index'))   # 重定向到首页
 
 def shopcartView():
     return HttpResponse('正在展示购物车。。。')
