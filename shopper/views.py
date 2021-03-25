@@ -3,9 +3,11 @@ from django.contrib.auth.models import User     # 导入用户模型来查询数
 from django.contrib.auth import login,authenticate,logout  # 导入凭证的验证方法，以及登录,退出方法
 from .form import *
 from .models import *
+from showware.models import Ware_info
 from django.http import HttpResponse
 from django.core.paginator import Paginator,EmptyPage,PageNotAnInteger
 from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse   # 返回json作为ajax返回的结果
 
 # 功能：登录，注销，购物车，个人中心
 # 装饰器用来校验有没有登录，如果没有登录则需要跳转到指定界面，这个装饰器三个参数
@@ -104,5 +106,37 @@ def loginoutView(request):
     logout(request)
     return redirect(reverse('index:index'))   # 重定向到首页
 
-def shopcartView():
-    return HttpResponse('正在展示购物车。。。')
+@login_required(login_url='/shopper/login.html')
+def shopcartView(request):
+    """处理加入购物车或者是展示购物车的逻辑。这个设计当然也可以实现，但是如果我们设置专门的订单商品信息表更合理一些，记录下当时的商品价格以及优惠情况，这个后面再说"""
+    title="快乐购物车"
+    classContent="shopcarts"
+    # 获取请求参数
+    wareid=request.GET.get('wareid','')
+    warenum=request.GET.get("warenum",1)
+    userID=request.user.id
+    # 如果商品id不为空，则进行新增到购物车，否则就是直接展示即可
+    if wareid:
+        shopcart_info.objects.update_or_create(user_id=userID,nums=warenum,ware_id=wareid)
+        return redirect("shopper:shopcart")
+    # 如果添加的id为空，则展示购物车全部信息
+    shopcartAll=shopcart_info.objects.filter(user_id=userID)        # 查询当前用户的购物车信息
+    waredict={x.ware_id:x.nums for x in shopcartAll} # 从当前用户的购物车获取商品id和购买数量
+    wareInfoList=Ware_info.objects.filter(id__in=waredict.keys())   # 从商品id获取商品详细信息
+    return render(request,'shopcart.html',locals())
+
+def shanchuView(request):
+    result={'state':'sucess'}
+    userId=request.GET.get('userId','')
+    wareId=request.GET.get('wareId','')
+    # 这里的规则感觉有问题，源码是如果用户id不为空则删除这个用户下的所有购物车明细，如果用户id为空，商品不为空，则删除具体商品，但是购物车的明细是商品id,用户id
+    # 所以应该修改为userid不能为空，当wareid为空的情况下，则删除这个用户下所有商品记录，如果不为空，则删除具体用户具体商品
+    if userId and wareId:
+        # 删除具体商品
+        shopcart_info.objects.filter(user_id=userId,ware_id=wareId).delete()
+    elif userId:
+        # 删除用户下所有购物车商品
+        shopcart_info.objects.filter(user_id=userId).delete()
+    else:
+        result={'state':'failed'}
+    return JsonResponse(result)

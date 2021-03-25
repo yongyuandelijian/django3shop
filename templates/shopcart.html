@@ -1,0 +1,142 @@
+<!--11-->
+{% extends 'common.html' %}
+{% load static %}
+{% block content %}
+    <div class="banner-bg w1200">
+        <h3>夏季清仓</h3>
+        <p>宝宝被子，宝宝衣服3折起</p>
+    </div>
+    <!--购物车表头-->
+    <div class="cart w1200">
+        <div class="cart-table-th">
+            <div class="th th-chk">
+                <div class="select-all">
+                    <div class="cart-checkbox">
+                        <input class="check-all" id="allCheckked" type="checkbox" value="true">
+                    </div>
+                    <label>&nbsp;&nbsp;全选</label>
+                </div>
+            </div>
+            <div class="th th-item">
+                <div class="th-inner">
+                    商品
+                </div>
+            </div>
+            <div class="th th-price">
+                <div class="th-inner">
+                    单价
+                </div>
+            </div>
+            <div class="th th-amount">
+                <div class="th-inner">
+                    数量
+                </div>
+            </div>
+            <div class="th th-sum">
+                <div class="th-inner">
+                    小计
+                </div>
+            </div>
+            <div class="th th-op">
+                <div class="th-inner">
+                    操作
+                </div>
+            </div>
+        </div>
+        <!--订单中商品的具体内容-->
+        <div class="OrderList">
+            <div class="order-content" id="list-cont">
+                {% for ware in wareInfoList %}
+                    <ul class="item-content layui-clear">
+                        <li class="th th-chk">
+                            <div class="select-all">
+                                <div class="cart-checkbox">
+                                    <input class="CheckBoxShop check" id="" type="checkbox" num="all" name="select-all"
+                                           value="true">
+                                </div>
+                            </div>
+                        </li>
+                        <li class="th th-item">
+                            <div class="item-cont">
+                                <a href="javascript:;"><img src="{{ ware.img_main.url }}" alt="查看商品"></a>
+                                <div class="text">
+                                    <div class="title">{{ ware.name }}</div>
+                                    <p><span>{{ ware.size }}</span></p>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="th th-price">
+                            <span class="th-su">{{ ware.price }}</span>
+                        </li>
+                        <!--这里的数量显示的是购物车中的数量-->
+                        <li class="th th-amount">
+                            <div class="box-btn layui-clear">
+                                <div class="less layui-btn">-</div>
+                                {% for k,v in waredict %}
+                                    {% if ware.id == k %}
+                                        <input class="Quantity-input" value="{{ v }}" disabled="disabled">
+                                    {% endif %}
+                                {% endfor %}
+                                <div class="add layui-btn">+</div>
+                            </div>
+                        </li>
+                        <li class="th th-sum">
+                            <span class="sum">0</span>
+                        </li>
+                        <li class="th th-op">
+                            <span class="dele-btn">删除</span>
+                            <p hidden="hidden">{{ ware.id }}</p>
+                        </li>
+                    </ul>
+                {% endfor %}
+            </div>
+        </div>
+        <!-- 222 -->
+        <div class="FloatBarHolder layui-clear">
+            <div class="th th-chk">
+                <div class="select-all">
+                    <div class="cart-checkbox">
+                        <input class="check-all check" id="" name="select-all" type="checkbox" value="true">
+                    </div>
+                    <label>&nbsp;&nbsp;已选<span class="Selected-pieces">0</span>件</label>
+                </div>
+            </div>
+            <div class="th batch-deletion">
+                <span class="batch-dele-btn">删除全部</span>
+                <p hidden="hidden" id="userId">{{ user.id }}</p>
+            </div>
+            <div class="th Settlement">
+                <button class="layui-btn" id="settlement">结算</button>
+            </div>
+            <div class="th total">
+                <p>应付：<span class="pieces-total">0</span></p>
+            </div>
+        </div>
+    </div>
+{% endblock content %}
+
+{% block script %}
+    layui.config({
+    base:'{% static 'js/' %}'
+    }).use(['mm','jquery','element','car'],function(){
+    var mm=layui.mm,$=layui.$,element=layui.element,car=layui.car;
+    car.init();
+
+    $(function(){
+    var counts=0   //订单合计
+    // each方法传入的函数，两个必须参数是下标和元素，这里计算购物车中每个商品的小计
+    $(".sum").each(function(i,e){
+    var quantity=$('.th-su')[i].innerHTML
+    var price=$('.Quantity-input')[i].innerHTML
+    e.innerHTML=(quantity*price).toFixed(2)
+    counts=counts*1+e.innerHTML*1
+    });
+    $(".pieces-total").text("￥"+counts.toFixed(2))
+    });
+    // 点击结算事件
+    $("settlement").on('click',function(){
+    var total=$(".pieces.total").text()
+    window.location="{% url 'shopper:pays' %}?total="+total
+    })
+    });
+{% endblock script %}
